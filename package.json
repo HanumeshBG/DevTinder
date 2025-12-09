@@ -1,0 +1,31 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "Dev Tinder backend",
+  "keywords": [
+    "Node",
+    "Dev",
+    "Tinder",
+    "Express"
+  ],
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+
+  "homepage": "https://github.com/HanumeshBG/DevTinder#readme",
+  "bugs": {
+    "url": "https://github.com/HanumeshBG/DevTinder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HanumeshBG/DevTinder.git"
+  },
+  "license": "ISC",
+  "author": "Hanumesh B G",
+  "type": "commonjs",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
