@@ -15,7 +15,7 @@ app.post("/signup", async (req, res) => {
         await user.save();
         res.status(200).send("User signed up successfully");
     } catch (err) {
-        res.status(400).send("Error signing up user");
+        res.status(400).send("Error signing up user: "+ err.message);
     }
 })
 
@@ -30,7 +30,7 @@ app.get("/users", async (req, res) => {
             res.status(200).json(users);
         }
     } catch (err) {
-        res.status(400).send("Error signing up user" + err);
+        res.status(400).send("Error getting user: " + err.message);
     }
 })
 
@@ -45,7 +45,7 @@ app.delete("/user", async (req, res) => {
             res.status(200).send("User deleted successfully");
         }
     } catch (err) {
-        res.status(400).send("Error signing up user");
+        res.status(400).send("Error on deleting user: " + err.message);
     }
 })
 
@@ -77,7 +77,7 @@ app.patch("/user/:userID", async (req, res) => {
             res.status(200).json(user);
         }
     } catch (err) {
-        res.status(400).send("Error signing up user");
+        res.status(400).send("Error on updating user: " + err.message);
     }
 })
 
