@@ -1,119 +1,86 @@
 const express = require('express');
 const connectDB = require('./config/database');
-const User = require('./models/user');
-const { validateSignupData } = require('./utils/validations');
-const bcrypt = require('bcrypt');
-const validator = require('validator');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
 // Used to parse JSON bodies
 app.use(express.json());
+app.use(cookieParser());
 
-app.post("/signup", async (req, res) => {
-    try {
-        // Validate signup data
-        validateSignupData(req);
+// Routes
+const authRoutes = require('./routes/auth');
+const profileRoutes = require('./routes/profile');
+const requestRoutes = require('./routes/request');
+const userRoutes = require('./routes/user');
 
-        const {firstName, lastName, email, password, age, gender} = req.body;
-        const passwordHash = await bcrypt.hash(password, 10);
-    
-        // Signup logic here
-        const user = new User({firstName, lastName, email, password: passwordHash, age, gender});
-        await user.save();
-        res.status(200).send("User signed up successfully");
-    } catch (err) {
-        res.status(400).send("Error signing up user: "+ err.message);
-    }
-})
+app.use("/", authRoutes);
+app.use("/profile", profileRoutes);
+app.use("/request", requestRoutes);
+app.use("/user", userRoutes);
 
-app.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
 
-        if(!validator.isEmail(email)){
-            throw new Error("Invalid email address");
-        }
+// app.get("/users", async (req, res) => {
+//     const emailToFind = req.body.email;
 
-        const user = await User.findOne({ email: email });
-        if (!user){
-            throw new Error("Invalid credentials");
-        }
+//     try{
+//         const users = await User.findOne({ email: emailToFind });
+//         if(users.length === 0) {
+//             res.status(404).send("No users found with the given email");
+//         } else {
+//             res.status(200).json(users);
+//         }
+//     } catch (err) {
+//         res.status(400).send("Error getting user: " + err.message);
+//     }
+// })
 
-        const isPasswordMatch = await bcrypt.compare(password, user.password);
-        if(!isPasswordMatch){
-            throw new Error("Invalid credentials");
-        } else {
-            res.status(200).send("User logged in successfully");
-        }
+// app.delete("/user", async (req, res) => {
+//     const userID = req.body.userID;
 
-    } catch (err) {
-        res.status(400).send("ERROR : "+ err.message);
-    }
-})
+//     try {
+//         const user = await User.findByIdAndDelete(userID);
+//         if (!user) {
+//             res.status(404).send("No user found with the given email");
+//         } else {
+//             res.status(200).send("User deleted successfully");
+//         }
+//     } catch (err) {
+//         res.status(400).send("Error on deleting user: " + err.message);
+//     }
+// })
 
-app.get("/users", async (req, res) => {
-    const emailToFind = req.body.email;
+// app.patch("/user/:userID", async (req, res) => {
+//     const userID = req.params?.userID;
 
-    try{
-        const users = await User.findOne({ email: emailToFind });
-        if(users.length === 0) {
-            res.status(404).send("No users found with the given email");
-        } else {
-            res.status(200).json(users);
-        }
-    } catch (err) {
-        res.status(400).send("Error getting user: " + err.message);
-    }
-})
+//     const ALLOWED_UPDATES = ['password', 'age', 'gender', 'skills', 'about'];
 
-app.delete("/user", async (req, res) => {
-    const userID = req.body.userID;
+//     const isUpdateValid = Object.keys(req.body).every((update) => 
+//         ALLOWED_UPDATES.includes(update)
+//     );
 
-    try {
-        const user = await User.findByIdAndDelete(userID);
-        if (!user) {
-            res.status(404).send("No user found with the given email");
-        } else {
-            res.status(200).send("User deleted successfully");
-        }
-    } catch (err) {
-        res.status(400).send("Error on deleting user: " + err.message);
-    }
-})
+//     if(!isUpdateValid) {
+//         res.status(400).send("Invalid updates!");
+//     }
 
-app.patch("/user/:userID", async (req, res) => {
-    const userID = req.params?.userID;
+//     if(req.body.skills.length > 10) {
+//         res.status(400).send("Skills cannot exceed 10");
+//     }
 
-    const ALLOWED_UPDATES = ['password', 'age', 'gender', 'skills', 'about'];
-
-    const isUpdateValid = Object.keys(req.body).every((update) => 
-        ALLOWED_UPDATES.includes(update)
-    );
-
-    if(!isUpdateValid) {
-        res.status(400).send("Invalid updates!");
-    }
-
-    if(req.body.skills.length > 10) {
-        res.status(400).send("Skills cannot exceed 10");
-    }
-
-    try {
-        const user = await User.findByIdAndUpdate(userID, req.body, { 
-            returnDocument:'after',
-            runValidators: true
-        });
-        if (!user) {
-            res.status(404).send("No user found");
-        } else {
-            res.status(200).json(user);
-        }
-    } catch (err) {
-        res.status(400).send("Error on updating user: " + err.message);
-    }
-})
-
+//     try {
+//         const user = await User.findByIdAndUpdate(userID, req.body, { 
+//             returnDocument:'after',
+//             runValidators: true
+//         });
+//         if (!user) {
+//             res.status(404).send("No user found");
+//         } else {
+//             res.status(200).json(user);
+//         }
+//     } catch (err) {
+//         res.status(400).send("Error on updating user: " + err.message);
+//     }
+// })
 
 connectDB().then(() => {
     console.log('Database connected successfully');
