@@ -4,7 +4,7 @@ const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
-const ALLOWED_SAFE_DATA = "firstName lastName email age gender skills about" // or ['firstName', 'lastName', 'email', 'age', 'gender', 'skills', 'about']
+const ALLOWED_SAFE_DATA = "firstName lastName email age gender skills about photoUrl" // or ['firstName', 'lastName', 'email', 'age', 'gender', 'skills', 'about']
 
 
 userRoutes.get("/requests/received", userAuth, async (req, res) => {
@@ -59,7 +59,7 @@ userRoutes.get("/feeds", userAuth, async (req, res) => {
     try {
         const loggedInUser = req.user;
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 2;
+        const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
         const connectionRequests = await ConnectionRequest.find({

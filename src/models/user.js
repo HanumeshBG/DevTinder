@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
+    photoUrl : {
+        type: String,
+        default: "https://cdn-icons-png.flaticon.com/512/149/149093.png"
+    },
     skills : {
         type: [String]
     },
