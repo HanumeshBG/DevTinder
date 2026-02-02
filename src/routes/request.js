@@ -6,6 +6,8 @@ const ConnectionRequest = require('../models/connectionRequest');
 const User = require('../models/user');
 const connectionRequest = require('../models/connectionRequest');
 
+const sendEmail = require("../utils/sendEmail")
+
 const ALLOWED_DATA = "firstName lastName email age gender skills about" // or ['firstName', 'lastName', 'email', 'age', 'gender', 'skills', 'about']
 
 requestRoutes.post("/send/:status/:toUserId", userAuth, async (req, res) => {
@@ -42,6 +44,9 @@ requestRoutes.post("/send/:status/:toUserId", userAuth, async (req, res) => {
             status: status
         });
         const data = await connectionRequest.save();
+
+        const emailResponse = await sendEmail.run();
+
         res.status(200).json({ message: "Connection request sent successfully", data });
     } catch (err) {
         res.status(400).send("ERROR : " + err.message);

@@ -3,6 +3,8 @@ const connectDB = require('./config/database');
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
 
+require('dotenv').config();
+
 const app = express();
 
 // Used to parse JSON bodies
@@ -89,8 +91,8 @@ app.use("/user", userRoutes);
 
 connectDB().then(() => {
     console.log('Database connected successfully');
-    app.listen(3000, () => {
-        console.log('Server is running on port 3000');
+    app.listen(process.env.PORT, () => {
+        console.log(`Server is running on port ${process.env.PORT}`);
     })
 }).catch((err) => {
     console.error('Database connection failed:', err);
