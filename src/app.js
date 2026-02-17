@@ -2,8 +2,12 @@ const express = require('express');
 const connectDB = require('./config/database');
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
+const http = require('http');
+const initializeSocket = require('./utils/socket');
 
 require('dotenv').config();
+
+// require('./utils/cornjob'); //uncomment to enable cornjob
 
 const app = express();
 
@@ -26,7 +30,8 @@ app.use("/profile", profileRoutes);
 app.use("/request", requestRoutes);
 app.use("/user", userRoutes);
 
-
+const server = http.createServer(app);
+initializeSocket(server);
 // app.get("/users", async (req, res) => {
 //     const emailToFind = req.body.email;
 
@@ -91,7 +96,7 @@ app.use("/user", userRoutes);
 
 connectDB().then(() => {
     console.log('Database connected successfully');
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
     })
 }).catch((err) => {
